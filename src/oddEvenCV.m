@@ -12,7 +12,7 @@ CVfolds=2; %Number of folds for cross-validation: 2=odd/even strides
 [trainData] = foldSplit(Yasym,CVfolds);
 trainData{end+1}=Yasym; %All data
 %% Fit Models
-maxOrder=4; %Fitting up to 4 states
+maxOrder=6; %Fitting up to 6 states
 %Opts for indentification:
 opts.robustFlag=false;
 opts.outlierReject=false;
@@ -43,16 +43,20 @@ for i=1:CVfolds+1
    end
 end
 %% Save (to avoid recomputing in the future)
-save ../res/oddEvenCV.mat model Yasym
+save ../res/oddEvenCV.mat model Yasym Uf
 %% To load (if necessary):
 load ../res/oddEvenCV.mat
 CVfolds=2; %Number of folds for cross-validation: 2=odd/even strides
 [trainData] = foldSplit(Yasym,CVfolds);
 trainData{end+1}=Yasym; %All data
+Uf=[U;ones(size(U))];
 %% Compare odd/even/all models using all data
 order=1;
 vizDataFit(model(order+1,:),Yasym',Uf)
 vizModels(model(order+1,:))
+%% Compare full data models using all data:
+vizDataFit(model(2:end,3),Yasym',Uf)
+vizModels(model(:,3))
 %% REmoving constant offset:
 for k=1:3 %odd, even, all
     aux=model{2,k};
