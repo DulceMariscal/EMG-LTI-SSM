@@ -1,5 +1,6 @@
 %%
 addpath(genpath('../../matlab-linsys/'))
+addpath(genpath('../../robustCov/'))
 %%
 clear all
 %% Load real data:
@@ -49,39 +50,11 @@ load ../res/oddEvenCV.mat
 CVfolds=2; %Number of folds for cross-validation: 2=odd/even strides
 [trainData] = foldSplit(Yasym,CVfolds);
 trainData{end+1}=Yasym; %All data
-Uf=[U;ones(size(U))];
 %% Compare odd/even/all models using all data
-order=1;
+order=5;
 vizDataFit(model(order+1,:),Yasym',Uf)
-vizModels(model(order+1,:))
-%% Compare full data models using all data:
+%% Compare full data models of different orders using all data:
 vizDataFit(model(2:end,3),Yasym',Uf)
-vizModels(model(:,3))
-%% REmoving constant offset:
-for k=1:3 %odd, even, all
-    aux=model{2,k};
-    %data=trainData{k}';
-    data=trainData{k}'-aux.D(:,2);
-    aux.D=aux.D(:,1);
-    aux.B=aux.B(:,1);
-    vizDataFit({aux},data,U)
-    set(gcf,'Name',['CV' num2str(k) ', training data'])
-end
-%%
-% %% Test set:
-% for k=1:3
-%     Yaux=Yf;
-%     Yaux(:,k:3:end)=NaN;
-%     vizDataFit(model(2:5,4-k),Yaux,Uf)
-% set(gcf,'Name',['CV' num2str(4-k) ', testing data'])
-% end
-% %%All:
-% for k=1:3
-%     vizDataFit(model(2:5,k),Yf,Uf)
-%     set(gcf,'Name',['CV' num2str(k) ', ALL data'])
-% end
-% %% See models
-% for k=1:3
-%     vizModels(model(2:5,k))
-%     set(gcf,'Name',['CV' num2str(k) ', model viz'])
-% end
+%% Compare cross-validated results:
+vizDataFit(model(2:end,1),trainData{2}',Uf) %Trained on odd, tested on even
+vizDataFit(model(2:end,2),trainData{1}',Uf) %Trained on even, tested on odd
