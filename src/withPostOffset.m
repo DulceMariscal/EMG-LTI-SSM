@@ -16,7 +16,7 @@ opts.fastFlag=true; %Cannot do fast for NaN filled data, disable here to avoid a
 opts.logFlag=true;
 opts.indD=[];
 opts.indB=1;
-Uf=[U;ones(size(U));[0:length(U)-1]/length(U)];
+Uf=[U;ones(size(U));zeros(1,1050),ones(1,600)];
 model=cell(maxOrder+1);
 for order=0:maxOrder
    tic
@@ -24,14 +24,14 @@ for order=0:maxOrder
     [J,B,C,D,Q,R]=getFlatModel(Yasym',Uf);
     name='Flat'; P=[]; logL=[]; outLog=[];
    else %Identify
-    [fAh,fBh,fCh,D,fQh,R,fXh,fPh,logL,outLog]=randomStartEM(Yasym',Uf,order,20,opts); %Slow/true EM
+    [fAh,fBh,fCh,D,fQh,R,fXh,fPh,logL,outLog]=randomStartEM(Yasym',Uf,order,10,opts); %Slow/true EM
     [J,B,C,X,~,Q,P] = canonize(fAh,fBh,fCh,fXh,fQh,fPh);
     name=['EM(' num2str(order) ')'];
    end
    model{order+1}=autodeal(J,B,C,D,Q,R,P,logL,outLog);
-   model{order+1}.name=[name ', all data, w/ramp'];
+   model{order+1}.name=[name ', all data, w/postOffset'];
    model{order+1}.runtime=toc;
 end
 
 %% Save (to avoid recomputing in the future)
-save ../res/withRampInput.mat model Yasym Uf
+save ../res/withPostOffset.mat model Yasym Uf
