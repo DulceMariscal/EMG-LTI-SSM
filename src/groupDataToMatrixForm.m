@@ -1,6 +1,6 @@
 function [Y,Yasym,Ycom,U,Ubreaks]=groupDataToMatrixForm(subjIdx,sqrtFlag)
 %% Load real data:
-fName='../data/dynamicsData.h5';
+fName='dynamicsData.h5';
 EMGdata=h5read(fName,'/EMGdata');
 SLA=h5read(fName,'/SLA');
 speedDiff=h5read(fName,'/speedDiff');

@@ -14,7 +14,7 @@ CVfolds=2; %Number of folds for cross-validation: 2=odd/even strides
 Uf=[U;ones(size(U))];
 datSet{1}=dset(Uf,trainData{1}');
 datSet{2}=dset(Uf,trainData{2}');
-datSet{3}=dset(Uf,Yasym');
+
 %% Fit Models
 maxOrder=6; %Fitting up to 6 states
 %Opts for indentification:
@@ -26,21 +26,16 @@ opts.indD=[];
 opts.indB=1;
 opts.Nreps=10;
 
-model=cell(maxOrder+1,CVfolds+1);
-logs=cell(maxOrder+1,CVfolds+1);
+model=cell(maxOrder+1,CVfolds);
+logs=cell(maxOrder+1,CVfolds);
 nameSuffix={'odd train','even train','all data'};
-for i=1:CVfolds+1
+for i=1:CVfolds
    for order=0:maxOrder
-       if order==0 %Flat model
-        [J,B,C,D,Q,R]=getFlatModel(datSet{i}.out,datSet{i}.in); 
-        model{order+1,i}=linsys.struct2linsys(autodeal(J,B,C,D,Q,R));
-        name=['Flat, ' nameSuffix{i}]; 
-       else %Identify
-        [model{order+1,i},logs{order+1,i}]=linsys.id(datSet{i},order,opts);
-        name=['EM (' num2str(order) '), ' nameSuffix{i}];
-       end
+       [mdl,outlog]=linsys.id(datSet{i},order,opts);
+       model{order+1,i}=mdl;
+       logs{order+1,i}=outlog;
    end
 end
 %% Save (to avoid recomputing in the future)
-save ../res/logs/oddEvenCV.mat logs
+save ../res/logs/oddEvenCV_.mat logs
 save ../res/oddEvenCV_.mat model datSet

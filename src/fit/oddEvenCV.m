@@ -5,7 +5,7 @@ addpath(genpath('../../robustCov/'))
 clear all
 %% Load real data:
 sqrtFlag=false;
-subjIdx=[2:6,8,10:16]; %Excluding C01 (outlier), C07, C09 (less than 600 strides of Post).
+subjIdx=[2:6,8,10:16]; %Excluding C01 (outlier), C07, C09 (less than 600 strides of Post), C16 has bad first trial of Adaptation (not included)
 [Y,Yasym,Ycom,U,Ubreaks]=groupDataToMatrixForm(subjIdx,sqrtFlag);
 
 %% Get folded data
@@ -27,7 +27,7 @@ for i=1:CVfolds+1
    for order=0:maxOrder
        tic
        if order==0 %Flat model
-        [J,B,C,D,Q,R]=getFlatModel(trainData{i}',Uf);    
+        [J,B,C,D,Q,R]=getFlatModel(trainData{i}',Uf);
         name='Flat'; P=[]; logL=[]; outLog=[];
        else %Identify
         [fAh,fBh,fCh,D,fQh,R,fXh,fPh,logL,outLog]=randomStartEM(trainData{i}',Uf,order,20,opts); %Slow/true EM
