@@ -9,18 +9,19 @@ subjIdx=[2:6,8,10:15]; %Excluding C01 (outlier), C07, C09 (less than 600 strides
 [Y,Yasym,Ycom,U,Ubreaks]=groupDataToMatrixForm(subjIdx,sqrtFlag);
 
 %% Get folded data
-CVfolds=2; %Number of folds for cross-validation: 2=odd/even strides
+CVfolds=4; %Number of folds for cross-validation: 2=odd/even strides
 [trainData] = foldSplit(Yasym,CVfolds);
 Uf=[U;ones(size(U))];
-datSet{1}=dset(Uf,trainData{1}');
-datSet{2}=dset(Uf,trainData{2}');
+for i=1:CVfolds
+    datSet{i}=dset(Uf,trainData{i}');
+end
 
 %% Fit Models
 maxOrder=6; %Fitting up to 6 states
 %Opts for indentification:
 opts.robustFlag=false;
 opts.outlierReject=false;
-opts.fastFlag=true; %Cannot do fast for NaN filled data, disable here to avoid a bunch of warnings.
+opts.fastFlag=true; %This seems to work pretty bad with so many NaNs (it works kind of ok for odd/even)
 opts.logFlag=true;
 opts.indD=[];
 opts.indB=1;
@@ -37,5 +38,5 @@ for i=1:CVfolds
    end
 end
 %% Save (to avoid recomputing in the future)
-save ../../res/logs/oddEvenCV_.mat logs
-save ../../res/oddEvenCV_.mat model datSet
+save ../../res/logs/oneEveryFourCV.mat logs
+save ../../res/oneEveryFourCV.mat model datSet
