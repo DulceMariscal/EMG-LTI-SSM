@@ -6,3 +6,5 @@
 *.m~
 
 src/old/
+
+legacy_app/

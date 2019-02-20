@@ -56,3 +56,12 @@ set(gcf,'Name','Post-data trained models');
 ph=findobj(gcf,'Type','Axes');
 ph(end).YAxis.Label.String='Adapt data';
 ph(end-3).YAxis.Label.String='Post data';
+
+%% sqrt data: to check that the long tail of the data does not affect results
+load ../../res/allDataModelsSqrt.mat model datSet
+
+vizDataLikelihood(model(1:9),datSet)
+ph=findobj(gcf,'Type','Axes');
+for i=1:length(ph)
+  set(ph(i),'XTickLabelRotation',0,'XTickLabel',mat2cell(num2str([0:10]'),ones(11,1),2))
+end
