@@ -11,6 +11,8 @@ subjIdx=[2:6,8,10:15]; %Excluding C01 (outlier), C07, C09 (less than 600 strides
 %% Get folded data
 CVfolds=2; %Number of folds for cross-validation: 2=odd/even strides
 [trainData] = foldSplit(Yasym,CVfolds);
+trainData{2}(1051,:)=trainData{1}(1051,:); %Putting first sample of Post into second fold, despite it being an odd stride
+trainData{1}(1051,:)=NaN; %Removing it from first fold
 Uf=[U;ones(size(U))];
 datSet{1}=dset(Uf,trainData{1}');
 datSet{2}=dset(Uf,trainData{2}');
@@ -20,7 +22,8 @@ maxOrder=6; %Fitting up to 6 states
 %Opts for indentification:
 opts.robustFlag=false;
 opts.outlierReject=false;
-opts.fastFlag=true; %Cannot do fast for NaN filled data, disable here to avoid a bunch of warnings.
+opts.fastFlag=false; %Cannot do fast for NaN filled data, disable here to avoid a bunch of warnings.
+warning('off','statKSfast:fewSamples') %This is needed to avoid a warning bombardment
 opts.logFlag=true;
 opts.indD=[];
 opts.indB=1;
@@ -37,5 +40,5 @@ for i=1:CVfolds
    end
 end
 %% Save (to avoid recomputing in the future)
-save ../../res/logs/oddEvenCV_.mat logs
-save ../../res/oddEvenCV_.mat model datSet
+save ../../res/logs/oddEvenCV2.mat logs
+save ../../res/oddEvenCV2.mat model datSet
