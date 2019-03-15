@@ -16,7 +16,8 @@ if nargin<1
     subjIdx=2:16; %Excluding C01 only
 end
 muscPhaseIdx=1:360; %All muscles
-Y=nanmedian(EMGdata(:,muscPhaseIdx,subjIdx),3);
+Y=EMGdata(:,muscPhaseIdx,subjIdx);
+Y=nanmedian(Y,3); %Median across subjs
 if nargin>1 && sqrtFlag
     Y=sqrt(Y);
 end

@@ -13,9 +13,10 @@ age=group.getSubjectAgeAtExperimentDate/12;
 %% Change Adaptation condition to Adapt1,2,3
 for i=1:length(group.adaptData)
   N=length(group.adaptData{i}.metaData.conditionName);
-  idx=find(strcmp('Adaptation',group.adaptData{i}.metaData.conditionName));
+  idx=find(strcmp('Adaptation',group.adaptData{i}.metaData.conditionName)); %Idx of Adaptation condition
   group.adaptData{i}.metaData.conditionName(idx:N+2)=[{'Adapt1','Adapt2','Adapt3'} group.adaptData{i}.metaData.conditionName(idx+1:N)];
-  aux=mat2cell(group.adaptData{i}.metaData.trialsInCondition{idx},1,ones(1,3));
+  trialIdx=group.adaptData{i}.metaData.trialsInCondition{idx}
+  aux=mat2cell(trialIdx,1,ones(1,3));
   group.adaptData{i}.metaData.trialsInCondition(idx:N+2)=[aux group.adaptData{i}.metaData.trialsInCondition(idx+1:N)];
 end
 

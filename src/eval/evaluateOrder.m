@@ -1,5 +1,6 @@
-addpath(genpath('../../matlab-linsys/'))
-addpath(genpath('../../robustCov/'))
+addpath(genpath('../../../matlab-linsys/'))
+addpath(genpath('../../../robustCov/'))
+addpath(genpath('../../'))
 %% First: load models fitted w/all data, look at BIC, AIC, LRT
 load ../../res/allDataModels.mat model datSet
 
@@ -10,15 +11,14 @@ for i=1:length(ph)
 end
 
 %% Second: load models trained on odd/even, look at cross-val logL
-load('../../res/oddEvenCV_.mat') %This dataset has the first stride of
+load('../../res/oddEvenCV_new.mat') %This dataset has the first stride of
 %both adapt and post in the odd-fold.
 %load('../../res/oddEvenCV2.mat') %These datasets contain the first stride 
 %of adapt in the odd-fold, and the first of post in the even-fold
 
-%Odd-trained on even data
-f1=vizDataLikelihood(model(:,1),datSet);
+f1=vizDataLikelihood(fitMdlOE(:,1),datSetOE);
 ph=findobj(gcf,'Type','Axes');
-f2=vizDataLikelihood(model(:,2),datSet);
+f2=vizDataLikelihood(fitMdlOE(:,2),datSetOE);
 ph1=findobj(gcf,'Type','Axes');
 
 fh=figure;
@@ -26,15 +26,15 @@ ah=copyobj(ph([2,3]),fh);
 ah(1).Title.String={'Odd-model';'Cross-validation'};
 ah(1).YAxis.Label.String={'Even-data'; 'log-L'};
 ah(2).Title.String={'Odd-model';'-BIC/2'};
-ah(2).XTickLabel={'0','1','2','3','4','5','6'};
-ah(1).XTickLabel={'0','1','2','3','4','5','6'};
+ah(2).XTickLabel={'1','2','3','4','5','6'};
+ah(1).XTickLabel={'1','2','3','4','5','6'};
 ah1=copyobj(ph1([1,4]),fh);
 ah1(2).Title.String={'Even-model';'Cross-validation'};
 ah1(2).YAxis.Label.String={'Odd-data';'log-L'};
 ah1(2).XAxis.Label.String={'Model Order'};
-ah1(2).XTickLabel={'0','1','2','3','4','5','6'};
+ah1(2).XTickLabel={'1','2','3','4','5','6'};
 ah1(1).XAxis.Label.String={'Model Order'};
-ah1(1).XTickLabel={'0','1','2','3','4','5','6'};
+ah1(1).XTickLabel={'1','2','3','4','5','6'};
 ah1(1).Title.String={'Even-model';'-BIC/2'};
 set(gcf,'Name','Odd/even cross-validation');
 

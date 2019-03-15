@@ -17,12 +17,16 @@ maxOrder=10; %Fitting up to 10 states
 opts.robustFlag=false;
 opts.outlierReject=false;
 opts.fastFlag=100; %Cannot do fast for NaN filled data, disable here to avoid a bunch of warnings.
+warning('off','statKSfast:fewSamples')
 opts.logFlag=true;
+opts.diagR=true;
 opts.indD=[];
 opts.indB=1;
-opts.Nreps=30;
+opts.Nreps=10;
 
-[model,outlog]=linsys.id(datSet,0:maxOrder,opts);
-
+model=cell(maxOrder+1,1);
+logs=cell(maxOrder+1,1);
+[model,logs]=linsys.id(datSet,0:maxOrder,opts);
 %% Save (to avoid recomputing in the future)
-save ../../res/allDataModels_new.mat model datSet outlog
+save ../../res/logs/allDataModels_diagR.mat logs
+save ../../res/allDataModels_diagR.mat model datSet

@@ -12,13 +12,20 @@ Uf=[U;ones(size(U))];
 datSet=dset(Uf,Yasym');
 %% Get odd/even data
 datSetOE=alternate(datSet,2);
+%% Get folded data for adapt/post
+datSetAP=datSet.split([751,901]); %First half is 1-750, last part 901-1650
+datSetAP=datSetAP([1,3]); %Discarding the middle part
 %%
-opts.Nreps=1; %Single rep, this works well enough for full (non-CV) data
+opts.Nreps=20;
 opts.fastFlag=0; %Patient mode
 opts.indB=1;
 opts.indD=[];
-warning('off','statKSfast:fewSamples') %This is needed to avoid a warning bombardment
-[fitMdlOE,outlogOE]=linsys.id([datSetOE],1:6,opts);
+[fitMdl,outlog]=linsys.id([datSetOE,datSetAP],0:6,opts);
+
+fitMdlOE=fitMdl(:,1:2);
+fitMdlAP=fitMdl(:,3:4);
+outlogOE=outlog(:,1:2);
+outlogAP=outlog(:,3:4);
 
 %% Save (to avoid recomputing in the future)
-save ../../res/oddEvenCV_new.mat fitMdlOE outlogOE datSetOE
+save ../../res/CV.mat fitMdlOE fitMdlAP outlogAP outlogOE datSetOE datSetAP
