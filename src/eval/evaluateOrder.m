@@ -3,13 +3,13 @@ addpath(genpath('../../../robustCov/'))
 addpath(genpath('../../'))
 %% First: load models fitted w/all data, look at BIC, AIC, LRT
 load ../../res/allDataModels.mat model datSet
-
+model=cellfun(@(x) x.canonize('canonical'),model,'UniformOutput',false);
 vizDataLikelihood(model,datSet)
 ph=findobj(gcf,'Type','Axes');
 for i=1:length(ph)
   set(ph(i),'XTickLabelRotation',0,'XTickLabel',mat2cell(num2str([0:10]'),ones(11,1),2))
 end
-
+datSet.vizFit(model(2:5))
 %% Second: load models trained on odd/even, look at cross-val logL
 load('../../res/oddEvenCV_new.mat') %This dataset has the first stride of
 %both adapt and post in the odd-fold.
