@@ -8,3 +8,5 @@
 src/old/
 
 legacy_app/
+
+*.fig

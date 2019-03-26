@@ -17,29 +17,28 @@ U=datSet.in;
 X=Y-(Y/U)*U; %Projection over input
 s=var(X'); %Estimate of variance
 flatIdx=s<.005; %Variables are split roughly in half at this threshold
-datSetRed=dset(U,Y(~flatIdx,:));
 
 %% Fit Models
-maxOrder=6; %Fitting up to 10 states
+maxOrder=2; %Fitting up to 10 states
 %Opts for indentification:
 opts.robustFlag=false;
 opts.outlierReject=false;
-opts.fastFlag=true; %Cannot do fast for NaN filled data, disable here to avoid a bunch of warnings.
+opts.fastFlag=100; %Cannot do fast for NaN filled data, disable here to avoid a bunch of warnings.
 opts.logFlag=true;
 opts.indD=[];
 opts.indB=1;
 opts.Nreps=5;
-corrMat=cov(X');
-opts.fixR=median(s(~flatIdx))*eye(size(datSetRed.out,1)); %R proportional to eye
-opts.fixR=corrMat(~flatIdx,~flatIdx); %Full R
+%opts.fixR=median(s(~flatIdx))*eye(size(datSetRed.out,1)); %R proportional to eye
+%opts.fixR=corrMat(~flatIdx,~flatIdx); %Full R
 opts.fixR=[]; %Free R
-
-[modelRed,logs]=linsys.id(datSetRed,0:maxOrder,opts);
+opts.includeOutputIdx=find(~flatIdx); 
+[modelRed]=linsys.id(datSet,0:maxOrder,opts);
 %% Save (to avoid recomputing in the future)
-save ../../res/allDataModelsRed_freeR.mat modelRed datSetRed logs opts
+%save ../../res/allDataModelsRedalt.mat modelRed datSet
 
-%%
-modelRed=cellfun(@(x) x.canonize('canonical'),modelRed,'UniformOutput',false);
-vizDataLikelihood(modelRed,datSetRed)
-datSetRed.vizFit(modelRed)
+%% Compare models
+fittedLinsys.compare(modelRed)
+%% visualize structure
+modelRed=cellfun(@(x) x.canonize,modelRed,'UniformOutput',false);
+datSet.vizFit(modelRed)
 linsys.vizMany(modelRed)
