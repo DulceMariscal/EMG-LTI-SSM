@@ -35,7 +35,8 @@ opts.fixR=[]; %Free R
 
 [modelRed]=linsys.id(datSetRed,0:maxOrder,opts);
 %% Save (to avoid recomputing in the future)
-save ../../res/allDataModelsRed.mat modelRed datSetRed
+nw=datestr(now,'yyyymmddTHHMMSS');
+save(['../../res/allDataRed_' nw '.mat'],'fitMdlAP', 'outlogAP', 'datSetAP', 'opts');
 
 %% Compare models
 fittedLinsys.compare(modelRed(1:end))

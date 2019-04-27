@@ -20,22 +20,28 @@ flatIdx=s<.005; %Variables are split roughly in half at this threshold
 datSetOE=alternate(datSet,2);
 
 %%
-opts.Nreps=20;
+opts.Nreps=10;
 opts.fastFlag=0; %No fast flag not nan
 opts.indB=1;
 opts.indD=[];
 opts.includeOutputIdx=find(~flatIdx);
+opts.stableA=true;
 [fitMdlOE,outlogOE]=linsys.id([datSetOE],0:6,opts);
 
 %% Save (to avoid recomputing in the future)
-save ../../res/OE_CVred.mat fitMdlOE outlogOE datSetOE opts
+nw=datestr(now,'yyyymmddTHHMMSS');
+save(['../../res/OE_CVred_' nw '.mat'],'fitMdlOE', 'outlogOE', 'datSetOE', 'opts');
 
-%% Visualize CV logL
+%% Visualize CV log
+[fh] = vizCVDataLikelihood(fitMdlOE(:,:),datSetOE([2,1]));
+ah=findobj(gcf,'Type','Axes');
+ah(2).Title.String={'Odd-model CV'};
+ah(2).YAxis.Label.String={'Even-data'; 'log-L'};
+ah(2).XTickLabel={'0','1','2','3','4','5'};
+ah(2).XLabel.String='';
+set(gcf,'Name','Odd/even cross-validation');
 
 %% Visualize self-measured BIC
-%for %Each of the four fit sets
-%    f(i)= %Generate fig
-%end
-
-%Copy all panels onto single fig:
-%fh=figure;
+f1=fittedLinsys.compare(fitMdlOE(:,1));
+f1.Name='Odd-models goodness-of-fit';
+fittedLinsys.compare(fitMdlOE(:,2))

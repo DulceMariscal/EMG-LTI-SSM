@@ -19,15 +19,15 @@ s=var(X'); %Estimate of variance
 flatIdx=s<.005; %Variables are split roughly in half at this threshold
 
 %% Fit Models
-maxOrder=4; %Fitting up to 10 states
+maxOrder=10; %Fitting up to 10 states
 %Opts for indentification:
 opts.robustFlag=false;
 opts.outlierReject=false;
-opts.fastFlag=50; %Cannot do fast for NaN filled data, disable here to avoid a bunch of warnings.
+opts.fastFlag=200; %Cannot do fast for NaN filled data, disable here to avoid a bunch of warnings.
 opts.logFlag=true;
 opts.indD=[];
 opts.indB=1;
-opts.Nreps=5;
+opts.Nreps=20;
 opts.stableA=true;
 %opts.fixR=median(s(~flatIdx))*eye(size(datSetRed.out,1)); %R proportional to eye
 %opts.fixR=corrMat(~flatIdx,~flatIdx); %Full R
@@ -35,7 +35,8 @@ opts.fixR=[]; %Free R
 opts.includeOutputIdx=find(~flatIdx); 
 [modelRed]=linsys.id(datSet,0:maxOrder,opts);
 %% Save (to avoid recomputing in the future)
-save ../../res/allDataModelsRedalt.mat modelRed datSet
+nw=datestr(now,'yyyymmddTHHMMSS');
+save(['../../res/allDataRedAlt_' nw '.mat'],'modelRed', 'datSet', 'opts');
 
 %% Compare models
 fittedLinsys.compare(modelRed)
