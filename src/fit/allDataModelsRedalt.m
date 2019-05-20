@@ -44,3 +44,5 @@ fittedLinsys.compare(modelRed)
 modelRed=cellfun(@(x) x.canonize,modelRed(2:end),'UniformOutput',false);
 datSet.vizFit(modelRed)
 linsys.vizMany(modelRed)
+%% 
+modelRed{4}.canonize.vizFit(datSet)
