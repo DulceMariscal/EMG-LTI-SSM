@@ -1,0 +1,33 @@
+%% Set figure sizes in pixels
+% figUnits='pixels';
+% figPos=[0 0  1500 900];
+% colWidth=350;
+% colHeight=800;
+% bottomMarg=50;
+% leftMarg=100;
+% leftMarg=.1;
+% btwMarg=.1;
+% colWidth=.6/3; %3 columns with .1 (left), .1 (betw cols)  and .1 (right) margins
+% colHeight=.7;
+% bottomMarg=.2; %Implicit top marg: .1
+% midColMargin=.1;
+% midColHeight=(colHeight-midColMargin)/2;
+
+factor=2.5; %To see largr!
+factor=1;
+figUnits='pixels';
+figPosThreeCols=[1 1  17.4 10]*factor*96/2.54; %96dpi on-screen resolution, to see real size
+figPosTwoCols=[1 1 11.6 10]*factor*96/2.54; %Two-thirds of the width exactly
+paperUnits='centimeters';
+paperPositionThreeCols=[0 0 17.4 10]*factor;
+paperPositionTwoCols=[0 0 11.6 10]*factor; 
+leftMargThreeCol=.1;
+leftMargTwoCol=leftMargThreeCol*1.5;
+btwMargThreeCol=.1;
+btwMargTwoCol=btwMargThreeCol*1.5;
+colWidthThreeCol=.6/3; %3 columns with .1 (left), .1 (betw cols)  and .1 (right) margins
+colWidthTwoCol=colWidthThreeCol*1.5;
+colHeight=.7;
+bottomMarg=.2; %Implicit top marg: .1
+midColMargin=.1;
+midColHeight=(colHeight-midColMargin)/2;

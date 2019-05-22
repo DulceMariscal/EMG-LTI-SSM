@@ -32,15 +32,21 @@ opts.stableA=true;
 nw=datestr(now,'yyyymmddTHHMMSS');
 save(['../../res/OE_CVred_' nw '.mat'],'fitMdlOE', 'outlogOE', 'datSetOE', 'opts');
 
+%% load latest
+load ../../res/OE_CVred_20190401T195118.mat
 %% Visualize CV log
 [fh] = vizCVDataLikelihood(fitMdlOE(:,:),datSetOE([2,1]));
 ah=findobj(gcf,'Type','Axes');
 ah(2).Title.String={'Odd-model CV'};
 ah(2).YAxis.Label.String={'Even-data'; 'log-L'};
-ah(2).XTickLabel={'0','1','2','3','4','5'};
+ah(2).XTickLabel={'Flat','1','2','3','4','5','6'};
 ah(2).XLabel.String='';
-set(gcf,'Name','Odd/even cross-validation');
-
+ah(1).Title.String={'Even-model CV'};
+ah(1).YAxis.Label.String={'Odd-data'; 'log-L'};
+ah(1).XTickLabel={'Flat','1','2','3','4','5','6'};
+ah(1).XLabel.String='';
+set(gcf,'Name','Odd/even cross-validation','Units','Normalized','OuterPosition',[.8 .7 .2 .3]);
+saveFig(gcf,'../../fig/','OEcvRed',0)
 %% Visualize self-measured BIC
 f1=fittedLinsys.compare(fitMdlOE(:,1));
 f1.Name='Odd-models goodness-of-fit';

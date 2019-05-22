@@ -36,6 +36,8 @@ opts.includeOutputIdx=find(~flatIdx);
 nw=datestr(now,'yyyymmddTHHMMSS');
 save(['../../res/blocked' num2str(blkSize) '_CVred_' nw '.mat'],'fitMdlBlocked', 'outlogBlocked', 'datSetBlocked', 'opts');
 
+%%
+load ../../res/blocked20_CVred_20190403T141344.mat
 %% Visualize CV log
 [fh] = vizCVDataLikelihood(fitMdlBlocked(:,:),datSetBlocked([2,1]));
 ah=findobj(gcf,'Type','Axes');

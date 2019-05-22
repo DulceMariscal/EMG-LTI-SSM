@@ -4,7 +4,7 @@ addpath(genpath('../../../matlab-linsys/'))
 addpath(genpath('../../../robustCov/'))
 %%
 clear all
-%% Load real data:
+%% Dataset w/o drift for variable exclusion criteria (so we use the same as in the non-drift case)
 sqrtFlag=false;
 subjIdx=[2:6,8,10:15]; %Excluding C01 (outlier), C07, C09 (less than 600 strides of Post), C16 (missed first trial of Adapt)
 [Y,Yasym,Ycom,U,Ubreaks]=groupDataToMatrixForm(subjIdx,sqrtFlag);
@@ -18,8 +18,14 @@ X=Y-(Y/U)*U; %Projection over input
 s=var(X'); %Estimate of variance
 flatIdx=s<.005; %Variables are split roughly in half at this threshold
 
+%% Generate dataset WITH drift
+sqrtFlag=false;
+subjIdx=[2:6,8,10:15]; %Excluding C01 (outlier), C07, C09 (less than 600 strides of Post), C16 (missed first trial of Adapt)
+[Y,Yasym,Ycom,U,Ubreaks]=groupDataToMatrixForm(subjIdx,sqrtFlag);
+Uf=[U;ones(size(U));[0:size(U,2)-1]/size(U,2)];
+datSet=dset(Uf,Yasym');
 %% Fit Models
-maxOrder=6; %Fitting up to 10 states
+maxOrder=6; %Fitting up to 6 states
 %Opts for indentification:
 opts.robustFlag=false;
 opts.outlierReject=false;
@@ -36,19 +42,14 @@ opts.includeOutputIdx=find(~flatIdx);
 [modelRed]=linsys.id(datSet,0:maxOrder,opts);
 %% Save (to avoid recomputing in the future)
 nw=datestr(now,'yyyymmddTHHMMSS');
-save(['../../res/allDataRedAlt_' nw '.mat'],'modelRed', 'datSet', 'opts');
+save(['../../res/allDataRedAltdrift_' nw '.mat'],'modelRed', 'datSet', 'opts');
 
 %%
-load('/Datos/Documentos/code/EMG-LTI-SSM/res/allDataRedAlt_20190425T210335.mat')
+%load ../../res/allDataRedAltdrift_
 %% Compare models
-for i=2:11
-modelRed{i}.name=num2str(i-1);
-end
-fittedLinsys.compare(modelRed(1:11))
-set(gcf,'Units','Normalized','OuterPosition',[.4 .7 .6 .3])
-saveFig(gcf,'../../fig/','allDataModelsRedAltCompare',0)
+modelRed=cellfun(@(x) x.canonize, modelRed,'UniformOutput',false);
+fittedLinsys.compare(modelRed(2:7))
 %% visualize structure
-modelRed2=cellfun(@(x) x.canonize,modelRed,'UniformOutput',false);
-datSet.vizFit(modelRed2(1:11))
+datSet.vizFit(modelRed)
 %%
-linsys.vizMany(modelRed2(2:6))
+linsys.vizMany(modelRed(2:6))
