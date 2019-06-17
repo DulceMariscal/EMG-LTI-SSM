@@ -12,3 +12,5 @@ legacy_app/
 *.fig
 
 *.eps
+
+*.png
