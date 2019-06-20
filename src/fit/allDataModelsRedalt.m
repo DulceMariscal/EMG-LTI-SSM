@@ -38,6 +38,17 @@ opts.includeOutputIdx=find(~flatIdx);
 nw=datestr(now,'yyyymmddTHHMMSS');
 save(['../../res/allDataRedAlt_' nw '.mat'],'modelRed', 'datSet', 'opts');
 
+%% Add dummy model:
+opts1=opts;
+opts1.fixA=eye(180);
+opts1.fixC=eye(180);
+opts1.includeOutputIdx=1:180;
+opts1.stableA=false;
+opts1.Nreps=0;
+opts1.refineMaxIter=10; %Giant model, cannot afford too many iterations
+[modelDummy]=linsys.id(datSet,180,opts1);
+dummyFit=modelDummy.fit(datSet,[],'KF');
+save('../../res/allDataDummyModel.mat','modelDummy','opts1','datSet','dummyFit')
 %%
 load('/Datos/Documentos/code/EMG-LTI-SSM/res/allDataRedAlt_20190425T210335.mat')
 %% Compare models

@@ -55,7 +55,7 @@ opts.refineMaxIter=5e4; %We want a very precise so
 opts.fixR=[]; %Free R
 opts.includeOutputIdx=find(~flatIdx); 
 modelRed{1}='';
-ssPermuted=ss;
+ssPermuted=ss; %Passing to EM in a random order to make sure that they are not being treated as a sequence.
 ssPermuted.in=ssPermuted.in([5,4,2,1,3]);
 ssPermuted.out=ssPermuted.out([5,4,2,1,3]);
 [modelRed(2:maxOrder+1)]=linsys.id(ssPermuted,1:maxOrder,opts);
@@ -63,83 +63,4 @@ ssPermuted.out=ssPermuted.out([5,4,2,1,3]);
 nw=datestr(now,'yyyymmddTHHMMSS');
 save(['../../res/allDataRedAltBroken_' nw '.mat'],'modelRed', 'datSet', 'opts','Ubreaks','flatIdx');
 
-%% Compare continuously fitted model and broken model for estimating blocks individually
-clear all
-figure;
-load ../../res/allDataRedAlt_20190510T175706.mat %Orders from 0 to 6
-contModel=modelRed; %Model fitted to data as single block
-load ../../res/allDataRedAltBroken_20190616T001216.mat
-blockedModel=modelRed; %Model fitted to individual blocks
-ss=datSet.split(find(Ubreaks),true);
-ord=4; %three-state
-
-for kk=1:2
-    switch kk
-        case 1
-            %Option 1: load the model fitted to the continous data:
-            mdl=contModel{ord};
-            %ll=modelRed{4}.logL(datSet)
-            %ll=modelRed{4}.logL(ss) %Does not work
-            ttl='Continuous dataset model fit';
-         case 2
-             %Option 2: load the model fitted to the broken data:
-            mdl=blockedModel{ord};
-            %Need to pad,  not sure why it didnt happen at EM time:
-            Dpad=datSet.out/datSet.in;
-            Dpad=Dpad(flatIdx,:);
-            mdl=mdl.pad(flatIdx,Dpad);
-            mdl=mdl.canonize('canonicalAlt');
-            %Shift states by an arbitrary portion of the inputs
-            l1=mdl.logL(ss);
-            K=[[3.3;2.15;0],[0;0;.4]];
-            mdl.D=mdl.D-mdl.C*K;
-            mdl.B=mdl.B-(mdl.A-eye(3))*K;
-            %To Do: linsys function that given K makes this transform
-            %To Do: linsys function to automate K selection to maximize logL of some
-            %target dataset.
-            %Check that shift does not change likelihood:
-            l2=mdl.logL(ss);
-            deltaL=l2-l1 %Should be 0 (numerically)
-            ttl='Blocked dataset model fit';
-    end
-    % For each block, get the smoothed/MLE state estimate
-    subplot(2,1,kk)
-    hold on
-    x1=0;
-    mdl=mdl.canonize('canonicalAlt');
-    for i=1:length(ss.in) %Each block
-        single=ss.extractSingle(i);
-        mleState{i}=mdl.Ksmooth(single);
-        if i==1
-            iC=[];
-        else
-            iC=dsstate.getSample(dsstate.Nsamp); %Last sample of fit to previous block
-            iC=mleState{i}.getSample(1); %First sample of the MLE states
-        end
-        [dsout,dsstate]=mdl.simulate(single.in,iC,true,true); %Deterministic simulation from last point
-        mleState{i}.plot(x1);
-        %dsstate.plot(x1)
-        %To do: add taus in legend
-
-        x1=x1+mleState{i}.Nsamp;
-    end
-    title(ttl)
-    if kk==2
-        xlabel('Strides')
-    end
-    ylabel('State value (a.u.)')
-end
-
-%% Compare model orders for the broken data
-load ../../res/allDataRedAltBroken_20190616T001216.mat
-for i=2:5
-modelRed{i}.name=num2str(i-1);
-end
-fittedLinsys.compare(modelRed(2:5))
-set(gcf,'Units','Normalized','OuterPosition',[.4 .7 .6 .3])
-%saveFig(gcf,'../../fig/','allDataModelsRedAltCompare_broken',0)
-%% visualize structure
-modelRed2=cellfun(@(x) x.canonize,modelRed,'UniformOutput',false);
-datSet.vizFit(modelRed2(1:11))
-%%
-linsys.vizMany(modelRed2(2:6))
+%% Run evaluate breaks
