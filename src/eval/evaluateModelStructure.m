@@ -24,6 +24,7 @@ lg.Position(2)=.68;
 lg.AutoUpdate='off';
 
 mList={'TA','PER','SOL','LG','MG','BF','SMB','SMT','VM','VL','RF','HIP','ADM','TFL','GLU'};
+mList=mList(end:-1:1);
 p=findobj(f1,'Type','Axes');
 set(p,'FontSize',16)
 %For the timecourse plots, remove XTicks
@@ -42,6 +43,8 @@ for i=2:2:8
     p(i).YAxis.Limits=ps;
     ll=findobj(p(i),'Type','Line');
     set(ll,'Color','k')
+    ttl=p(i).Title.String;
+    p(i).Title.String=lower(ttl);
     
 end
 
@@ -56,6 +59,8 @@ for i=1:2:8
     end
     p(i).XAxis.TickValues=[1,4,7,10]+.5;
     p(i).XAxis.TickLabels={'DS','SINGLE','DS','SWING'};
+    p(i).XAxis.FontSize=16;
+    p(i).YAxis.FontSize=16;
     p(i).FontName='OpenSans';
     p(i).XAxis.FontWeight='bold';
     p(i).CLim=[-1 1];
@@ -64,15 +69,16 @@ end
 %Ticks in colorbar:
 cb=findobj(f1,'Type','Colorbar');
 cb.Ticks=[-1 -.9 0 .9 1];
-cb.TickLabels={'(F>S)','100%', '0%', '(S>F)', '100%'};
+cb.TickLabels={'dom.','+100%', '0%', 'n.d.', '+100%'};
 cb.TickLength=[0];
-cb.FontSize=14;
+cb.FontSize=15;
 cb.FontWeight='bold';
 cb.FontName='OpenSans';
 
-saveFig(f1,'../../fig/','3stateModelStructure',0)
-
+%saveFig(f1,'../../fig/','3stateModelStructure',0)
+export_fig ../../fig/3stateModelStructure.png -png -c[0 5 0 5] -transparent -r100
 %%
+close all
 wins=[141,151,201,601,1041,1051,1101,1301];
 [f2]=mdl.vizSingleRes(datSet,[],wins);
 % Fix residual plot:
@@ -85,6 +91,7 @@ ll(2).Color=.3*ones(1,3);
 ll(3).Color=.8*ones(1,3);
 
 mList={'TA','PER','SOL','LG','MG','BF','SMB','SMT','VM','VL','RF','HIP','ADM','TFL','GLU'};
+mList=mList(end:-1:1);
 set(p,'CLim',[-1 1])
 %Add window markers:
 axes(p(3))
@@ -104,13 +111,19 @@ p(2).YAxis.Limits=ps;
 p(2).XAxis.TickValues=[150,600,1050,1500];
 p(2).XAxis.FontSize=10;
 p(2).XAxis.TickLength=[0 0];
-ll=findobj(p(2),'Type','Line');
-ll.LineWidth=1;
-ll.Color='k';
+%ll=findobj(p(2),'Type','Line');
+%ll.LineWidth=1;
+%ll.Color='k';
 
 ll=findobj(p(3),'Type','Line','LineWidth',2);
 ll.Color='k';
 uistack(ll,'bottom')
+ll=findobj(p(3),'Type','Line');
+cc=get(gca,'ColorOrder');
+ll(1).Color='k';
+ll(3).LineWidth=1;
+ll(3).Color=cc(1,:);
+ll(2).Color=.4*ones(1,3);
 p(3).YAxis.Limits(2)=4;
 p(3).YAxis.TickValues=[1 2 3];
 p(3).YAxis.Label.FontSize=11;
@@ -138,9 +151,9 @@ for i=[1,4:18]
         p(1).Position(1)=.87;
         p(1).Position(4)=.16;
         p(1).Title.FontWeight='normal';
-        p(1).Title.String='first PC of residual';
-        p(1).Title.FontSize=10;
-        p(i).YAxis.FontSize=8;
+        %p(1).Title.String='PC1 of residual';
+        p(1).Title.FontSize=11;
+        p(i).YAxis.FontSize=9;
     else
        p(i).XAxis.TickValues=[];
        p(i).XAxis.TickLabels={};
@@ -150,9 +163,9 @@ end
 %Colorbar fix:
 cb=findobj(f2,'Type','Colorbar');
 cb.Ticks=[-1 -.9 0 .9 1];
-cb.TickLabels={'(F>S)','100%', '0%', '(S>F)', '100%'};
+cb.TickLabels={'dom.','+100%', '0%', 'n.d.', '+100%'};
 cb.TickLength=[0];
-cb.FontSize=12;
+cb.FontSize=14;
 cb.FontWeight='bold';
 cb.FontName='OpenSans';
 cb.Position(2)=.41;
@@ -167,4 +180,5 @@ lg.Position(1)=.7;
 lg.FontSize=11;
 lg.FontWeight='normal';
 
-saveFig(f2,'../../fig/','3stateModelResiduals',0)
+%saveFig(f2,'../../fig/','3stateModelResiduals',0)
+export_fig ../../fig/3stateModelResiduals.png -png -c[0 5 0 5] -transparent -r100

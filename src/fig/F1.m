@@ -47,13 +47,13 @@ condColors=repmat(.3*ones(1,3),5,1);
 condFontSize=10;
 fw='normal';
 text(-45,textY-.05,'SLOW','FontSize',condFontSize,'Clipping','off','Color',condColors(2,:),'FontWeight',fw)
-ptc=patch([0 ptWidth ptWidth 0]+conditionOffset(3),[.51 .51 1.6 1.6],.8*ones(1,3),'FaceAlpha',1,'EdgeColor','None');
+ptc=patch([0 ptWidth ptWidth 0]+conditionOffset(3),[.51 .51 1.6 1.6],.5*ones(1,3),'FaceAlpha',.7,'EdgeColor','None');
 uistack(ptc,'bottom')
 ptcw=patch([5 .9*ptWidth .9*ptWidth 5]-1000,[.55 .55 1.55 1.55],1*ones(1,3),'FaceAlpha',epochAlpha,'EdgeColor','k');
 uistack(ptc,'bottom')
-text(520,textY+.62,'LONG EXPOSURE','FontSize',condFontSize,'Clipping','off','Color',condColors(2,:),'FontWeight',fw)
+text(532,textY+.62,'ADAPTATION','FontSize',condFontSize,'Clipping','off','Color',condColors(2,:),'FontWeight',fw)
 text(545,textY+.38,'[900 STRIDES]','FontSize',condFontSize*.75,'Clipping','off','Color',condColors(2,:),'FontWeight',fw)
-ptc=patch(500*[0 1 1 0]+conditionOffset(4)+ptWidth,[.51 .51 1.6 1.6],.8*ones(1,3),'FaceAlpha',1,'EdgeColor','None');
+ptc=patch(500*[0 1 1 0]+conditionOffset(4)+ptWidth,[.51 .51 1.6 1.6],.8*ones(1,3),'FaceAlpha',.75,'EdgeColor','None');
 uistack(ptc,'bottom')
 text(200,textY+.28,'BASELINE','FontSize',condFontSize,'Clipping','off','Color',condColors(1,:),'FontWeight',fw)
 text(880,textY+.28,'WASHOUT','FontSize',condFontSize,'Clipping','off','Color',condColors(3,:),'FontWeight',fw)
@@ -73,7 +73,7 @@ for k=2
     for i=1:length(p1d)
         p1d(i).Colormap=ph(i).Colormap;
     end
-        p1d(2).Colormap=flipud(map);
+        p1d(2).Colormap=map;
 
     scale=.3;
     set(p1d,'FontSize',8);
@@ -93,14 +93,14 @@ for k=2
     set(ll,'FontSize',8)
     ll=findobj(ax,'Type','Line');
     ll(end-1).LineStyle='-';
-    ll(end-1).Color=legColors(1,:);
-    ll(end).Color=legColors(2,:);
+    ll(end-1).Color=legColors(2,:);
+    ll(end).Color=legColors(1,:);
     pt=findobj(ax,'Type','Patch');
     pt(2).FaceAlpha=.7;
     pt(1).FaceAlpha=.6;
     if k==2
         ax.Title.String='SINGLE MUSCLE ACTIVITY';
-        lg=legend(ll(end-1:end),{'Dom.','Non-dom.'},'Location','NorthEast');
+        lg=legend(ll(end-1:end),{'Non-dom.','Dom.'},'Location','NorthEast');
         lg.Box='off';
         lg.Position(1)=lg.Position(1)+.02;
         lg.Position(2)=lg.Position(2)+.012;
@@ -122,15 +122,15 @@ for k=2
     txt=findobj(p1d,'Type','Text','String','Baseline');
     txt.Position(1)=txt.Position(1)-1;
     txt.FontSize=6;
-    txt.String='Dominant';
+    txt.String='dominant';
     txt=findobj(p1d,'Type','Text','String','Early Adapt.');
     txt.Position(1)=txt.Position(1)-.5;
-    txt.String='Non-dom.';
+    txt.String='non-dom.';
     txt.FontSize=6;
     txt=findobj(p1d,'Type','Text','String','Difference');
     txt.Position(1)=txt.Position(1)-1;
     txt.Position(2)=txt.Position(2)-.2;
-    txt.String={'Difference'};
+    txt.String={'difference'};
     txt.FontSize=6;
         %delete(p1d(2:3))
 end
@@ -143,7 +143,7 @@ ph=findobj(f1c,'Type','Axes');
 p1c=copyobj(ph,fh);
 axes(p1c)
 set(p1c,'Colormap',flipud(niceMap(condColors(1,:))),'Clim',[0 1])
-p1c.Position=p1c.Position.*[0 1 0 1.2*1/heightFactor] + [leftMargThreeCol+1*colWidthThreeCol+1*btwMargThreeCol -.05 colWidthThreeCol -.05];
+p1c.Position=p1c.Position.*[0 1 0 1.2*1/heightFactor] + [1.5*leftMargThreeCol+1*colWidthThreeCol+1*btwMargThreeCol -.05 colWidthThreeCol -.05];
 
 faux=open('./Fig3.fig');
 ss=findobj(faux,'Type','Surface');
@@ -156,14 +156,14 @@ set(cc,'TickLabels',{'0%','50%','100%'});
 set(gcf,'Color',ones(1,3))
 cc.Limits=[0 1];
 cc.Position=cc.Position+[.08 -.11 -.02 -.01];
-title('LATE EXPOSURE ACTIVITY')
+title('LATE ADAPTATION ACTIVITY')
 ax=gca;
 %ax.Title.Color=condColors(1,:);
 for i=1:length(ax.YTickLabel)
     if i<16
-        aux=strcat(num2str(legColors(1,:)'),',')';       
+        aux=strcat(num2str(legColors(2,:)'),',')';       
     else
-        aux=strcat(num2str(legColors(2,:)'),',')';     
+        aux=strcat(num2str(legColors(1,:)'),',')';     
         aux=aux(2:end);
     end
     %ax.YTickLabel{i}=['\color[rgb]{' aux(1:end-1) '} ' ax.YTickLabel{i}];
@@ -175,15 +175,15 @@ end
 
 p1c.YAxis.FontSize=8;
 tt=findobj(gca,'Type','Text','String','SLOW/NON-DOM');
-tt.String='  NON-DOMINANT';
+tt.String='      DOMINANT';
 tt.Position=tt.Position+[-.02 .5 0];
 tt.FontWeight='normal';
-tt.Color=legColors(2,:);
-tt=findobj(gca,'Type','Text','String','FAST/DOMINANT');
-tt.String=' DOMINANT';
-tt.Position=tt.Position+[-.02 2 0];
-tt.FontWeight='normal';
 tt.Color=legColors(1,:);
+tt=findobj(gca,'Type','Text','String','FAST/DOMINANT');
+tt.String='NON-DOMINANT';
+tt.Position=tt.Position+[-.02 1 0];
+tt.FontWeight='normal';
+tt.Color=legColors(2,:);
 
 tt=findobj(gca,'Type','Text','String','EXTENSORS');
 tt.FontSize=8;
@@ -191,13 +191,17 @@ tt=findobj(gca,'Type','Text','String','FLEXORS');
 tt.FontSize=8;
 
 ll=findobj(gca,'Type','Line','Color',ax.ColorOrder(1,:));
-set(ll,'Color',legColors(1,:));
+set(ll,'Color',legColors(2,:));
 ll=findobj(gca,'Type','Line','Color',zeros(1,3));
 for i=1:length(ll)
    if ll(i).YData(1)<0
       ll(i).YData=ll(i).YData+.1; 
    end
 end
+ll=findobj(gca,'Type','Line','Color',legColors(1,:));
+ll2=findobj(gca,'Type','Line','Color',legColors(2,:));
+set(ll,'Color',legColors(2,:))
+set(ll2,'Color',legColors(1,:))
 p1c.XRuler.Axle.LineStyle = 'none';  
 p1c.YRuler.Axle.LineStyle = 'none';
 set(gca, 'TickLength',[0 0])
@@ -211,14 +215,14 @@ resizeFigure(f1c,.5)
 ph=findobj(f1c,'Type','Axes');
 p1c=copyobj(ph,fh);
 axes(p1c)
-set(p1c,'Colormap',flipud(niceMap(condColors(1,:))),'Clim',[-.5 .5])
+set(p1c,'Colormap',(niceMap(condColors(1,:))),'Clim',[-.5 .5])
 p1c.Position=p1c.Position.*[0 1 0 16/29*1.2*1/heightFactor] + [leftMargThreeCol+2*colWidthThreeCol+2*btwMargThreeCol .22 colWidthThreeCol -.05];
 ss=findobj(gca,'Type','surface');
 ss.CData=ss.CData+c1;
 ss.CData(1:15,:)=ss.CData(1:15,:)-ss.CData(16:30,:);
 ss.ZData(1:15,:)=ss.ZData(1:15,:)-ss.ZData(16:30,:);
-set(gca,'Colormap',cmap,'YLim',[0 15])
-title('ACTIVITY DIFFERENCE')
+set(gca,'Colormap',flipud(cmap),'YLim',[0 15])
+title('ACTIVITY ASYMMETRY')
 ax=gca;
 for i=1:length(ax.YTickLabel)
         aux=strcat(num2str([0 0 0]'),',')';       
@@ -232,7 +236,7 @@ delete(tt)
 %colorbar
 cc=colorbar('southoutside');
 set(cc,'Ticks',[-.5 0 .5],'FontSize',8,'FontWeight','normal');
-set(cc,'TickLabels',{'+50% n.d.','0%','+50% dom.'});
+set(cc,'TickLabels',{'+50% dom.','0%','+50% n.d.'});
 set(gcf,'Color',ones(1,3))
 cc.Limits=[-.5 .5];
 cc.Position=cc.Position+[+.04 -.14 -.02 .015];

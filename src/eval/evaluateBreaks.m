@@ -5,8 +5,28 @@ contModel=modelRed; %Model fitted to data as single block
 load ../../res/allDataRedAltBroken_20190616T001216.mat
 blockedModel=modelRed; %Model fitted to individual blocks
 ss=datSet.split(find(Ubreaks),true);
+addpath('../../../ext/altmany-export_fig-b1a7288/')
+% %% Find a new broken model from refining the continuous model for broken data, but maintaining the same offset values (to make models comparable):
+% ss2=ss;
+% ord=4;
+% refMdl=contModel{ord};
+% for j=1:length(ss.out)
+%     ss2.out{j}=ss.out{j}-refMdl.D(:,2);
+%     ss2.in{j}=ss.in{j}(1,:); %Dropping second input
+% end
+% refMdl.D=refMdl.D(:,1);
+% refMdl.B=refMdl.B(:,1);
+% refMdl.trainOptions.indB=[];
+% refMdl.trainOptions.indD=[];
+% newBrokenModel=refMdl.EMrefine(ss2);
+% refMdl=contModel{ord};
+% newBrokenModel.D=[newBrokenModel.D refMdl.D(:,2)];
+% newBrokenModel.B=[newBrokenModel.B zeros(size(newBrokenModel.B))];
+% newBrokenModel=newBrokenModel.mleShift(datSet);
+% models{1}=refMdl.mleShift(datSet).EMrefine(datSet); %Doing the shift here for fairness, should change nothing.
+% models{2}=newBrokenModel;
 
-%% Some model fixing:
+%% Alt: Some model fixing from the broken loaded model:
 ord=4; %three-state
 
 mdl=blockedModel{ord};
@@ -25,18 +45,22 @@ lc2=mdl.logL(datSet);
 deltaL=l2-l1 %Should be 0 (numerically)
 models{2}=mdl;
 models{1}=contModel{ord}.mleShift(datSet).EMrefine(datSet); %Doing the shift here for fairness, should change nothing.
+%%
+-1./log(eig(models{1}.A))
+-1./log(eig(models{2}.A))
+
 
 %%
-figure('Units','Pixels','InnerPosition',[100 100 300*4 300*2])
+figure('Units','Pixels','InnerPosition',[100 100 300*4 300*1.5])
 for kk=1:2
     mdl=models{kk};
     switch kk
         case 1
             %Option 1: load the model fitted to the continous data:
-            ttl='Continuous dataset model fit';
+            ttl='continuous dataset model fit';
          case 2
              %Option 2: load the model fitted to the broken data:
-            ttl='Blocked dataset model fit';
+            ttl='blocked dataset model fit';
     end
     % For each block, get the smoothed/MLE state estimate
     subplot(2,1,kk)
@@ -52,9 +76,13 @@ for kk=1:2
         %Adding an estimate for the next state at each block
         %which is to be compared to the first state in the prev block
         mleStateX0=mdl.A*mleState{i}.state(:,end)+mdl.B*ss.in{i}(:,end);
-        mleStateP0=mdl.A*mleState{i}.covar(:,:,1)*mdl.A' + mdl.Q;
+        mleStateP0=mdl.A*mleState{i}.covar(:,:,end)*mdl.A' + mdl.Q;
         mleState{i}=stateEstimate([mleState{i}.state mleStateX0],cat(3,mleState{i}.covar,mleStateP0));
         mleState{i}.plot(x1,99); %99% CI
+        
+        %Storing for later use:
+        firstState{i,kk}=mleState{i}.getSample(1);
+        lastState{i,kk}=stateEstimate(mleStateX0,mleStateP0);
         
 %         %Deterministic states:
 %         %%Deterministic simulation from last point, needs to be computed
@@ -95,47 +123,80 @@ for kk=1:2
     for jj=1:3
         ll=findobj(gca,'Color',cc(jj,:));
         set(ll,'Color',newColors(jj,:),'LineWidth',2)
+        %ll=findobj(gca,'Type','Line');
+        %set(ll,'Color','k')
         pp=findobj(gca,'FaceColor',cc(jj,:));
         set(pp,'FaceColor',newColors(jj,:))
     end
 end
 
-%For each plot: copy it 4 times, show only a zoomed version around the
+%% For each plot: copy it 4 times, show only a zoomed version around the
 %breaks
 ph=findobj(gcf,'Type','Axes');
-for i=1:length(ph)
-    for j=1:4
+ph=ph([2,1]);
+for i=1:length(ph) %Both types of fits
+    for j=1:4 %Copy four times
        ax=copyobj(ph(i),gcf);
-       ax.Position=[.08+(j-1)*.235 ph(i).Position(2) .2 ph(i).Position(4)];
+       %ax.Position=[.08+(j-1)*.17 ph(i).Position(2) .15 ph(i).Position(4)];
+       ax.Position=[.08+(j-1)*.18 .1+.45*(2-i) .16 .4];
         ax.XAxis.Limits=151+[-12,12]+(j-1)*300;
         ax.XAxis.TickValues=151+[-150:10:1500];
         axes(ax)
-        set(ax,'FontSize',12,'FontName','OpenSans')
+        set(ax,'FontSize',10,'FontName','OpenSans')
         grid on
         if j>1
            ax.YAxis.TickLabels={};
            ax.YAxis.Label.String='';
         else
             
-            if i==2
-            ylabel({'continuous dataset model';'state value (a.u.)'})
-            ll=findobj(ax,'Type','Line');
-            pp=findobj(ax,'Type','Patch');
-            legend([ll([6,11,1]); pp(end)],{'state 1','state 2','state 3','99% CI'},'Location','NorthWest','Box','off')
-            else
-               ylabel({'blocked dataset model';'state value (a.u.)'}) 
-            end
+        if i==1
+        ylabel({'continuous dataset model';'state value (a.u.)'})
+        ll=findobj(ax,'Type','Line');
+        pp=findobj(ax,'Type','Patch');
+        lg=legend([ll([6,11,1]); pp(end)],{'state 1','state 2','state 3','99% CI'},'Location','NorthWest','Box','off');
+        lg.Position(1)=.0795;
+        else
+           ylabel({'blocked dataset model';'state value (a.u.)'}) 
         end
-        if i>1
+        end
+        if i==1
             ax.XAxis.TickLabels={};
             title(['break ' num2str(j)])
         else
             title('')
         end
     end
+    %add a plot quantifying break amounts
+    ax=axes();
+    ax.Position=[.1+(4)*.18 .1+.45*(2-i) .16 .4];
+    hold on
+    for jj=1:3 %Each state
+        for j=1:4 %Each break
+            dScore(j,jj)= (firstState{j+1,i}.state(jj,1)-lastState{j,i}.state(jj,1))/sqrt(lastState{j,i}.covar(jj,jj,1)+firstState{j+1,i}.covar(jj,jj,1)); % d= (newState - predictedState)/sqrt(predictedVar+newVar);
+        end
+        bar(jj+[1:5:16],dScore(:,jj),'FaceColor',newColors(jj,:),'EdgeColor','none','BarWidth',.2) %All breaks for one state
+    end
+    ax.XAxis.Limits=[.75 20];
+    plot([0 20], 1.96*[1 1],'k--')
+    plot([0 20], -1.96*[1 1],'k--')
+    if i==2
+    set(ax,'XTick',[3:5:18],'XTickLabel',{'1','2','3','4'})
+    ax.XAxis.Label.String='break #';
+    ax.XAxis.Label.FontSize=12;
+    ax.FontSize=10;
+    ax.YAxis.Limits=[-9 2];
+    else
+        set(ax,'XTick',[],'XTickLabel',{})
+        ax.FontSize=10;
+        title('break z-score')
+        ax.YAxis.Limits=[-4.5 2];
+    end
+    %delete old plot
     delete(ph(i))
 end
-saveFig(gcf,'../../fig/','breaks',0)
+
+%saveFig(gcf,'../../fig/','breaks',0)
+%export_fig ../../fig/breaks.png -png -c[0 5 0 5] -transparent -r600
 %% If curious: compare model orders for the broken data
 load ../../res/allDataRedAltBroken_20190616T001216.mat
 for i=2:5

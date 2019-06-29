@@ -1,6 +1,7 @@
 addpath(genpath('../../../matlab-linsys/'))
 addpath(genpath('../../../robustCov/'))
 addpath(genpath('../../'))
+addpath('../../../ext/altmany-export_fig-b1a7288/')
 %% Load models
 clear all
 load ../../res/allDataRedAlt_20190510T175706.mat
@@ -75,23 +76,23 @@ p.YAxis.TickValues=[];
 p.YAxis.Limits(1)=0;
 p.XAxis.TickLength=[0 0];
 %Deterministic residuals:
-p1=findobj(f2,'Type','Axes');
-p=copyobj(p1,f);
-p.Position=[.26 .08 .17 .86];
-p.FontSize=8;
-p.Box='off';
-p.XAxis.TickLabels=strcat('\color[rgb]{0,0,0}  ', {'0','1','2','3','4','5','6'});
-p.XAxis.TickLength=[0 0];
-p.Title.String='Det. residuals';
-p.XAxis.Color='w';
+%p1=findobj(f2,'Type','Axes');
+%p=copyobj(p1,f);
+%p.Position=[.26 .08 .17 .86];
+%p.FontSize=8;
+%p.Box='off';
+%p.XAxis.TickLabels=strcat('\color[rgb]{0,0,0}  ', {'0','1','2','3','4','5','6'});
+%p.XAxis.TickLength=[0 0];
+%p.Title.String='Det. residuals';
+%p.XAxis.Color='w';
 ph=findobj(fh,'Type','Axes');
 ph=copyobj(ph,f);
 ph=ph(end:-1:1);
 for i=1:length(ph)
-   ph(i).Position=[.48+.17*mod(floor((i-1)/2),4) .08+.45*(mod(i,2)) .15 .42];
+   ph(i).Position=[.3+.23*mod(floor((i-1)/2),4) .1+.44*(mod(i,2)) .2 .41];
    ph(i).YAxis.Label.String=namePrefix{i};
    if i==3
-   ph(i).Title.String='CV logL';
+   ph(i).Title.String='CV log-L';
    else
        ph(i).Title.String='';
    end
@@ -115,9 +116,77 @@ for i=1:length(p)
     p(i).YAxis.Label.Color='k';
     p(i).FontName='OpenSans';
     p(i).FontSize=10;
+    p(i).XAxis.FontSize=12;
     tt=findobj(p(i),'Type','text');
     set(tt,'FontSize',10)
 end
-saveFig(f,'../../fig/','evaluateOrder',0)
+%saveFig(f,'../../fig/','evaluateOrder',0)
+export_fig ../../fig/evaluateOrder.png -png -c[0 5 0 5] -transparent -r600
+%% New evaluate order figure:
+f=figure('Units','Pixels','InnerPosition',[100 100 300*3 300*1]);
+
+%Copy BIC:
+p1=findobj(f1,'Type','Axes');
+p=copyobj(p1(end-1),f);
+p.Position=[.05 .15 .17 .75];
+p.XAxis.TickValues=[100:100:700];
+p.XAxis.TickLabels=strcat('\color[rgb]{0,0,0}  ', {'0','1','2','3','4','5','6'});
+p.Title.String='BIC';
+p.XAxis.Label.String='';
+p.YAxis.TickValues=[];
+p.YAxis.Limits(1)=0;
+p.XAxis.TickLength=[0 0];
+%Deterministic residuals:
+%p1=findobj(f2,'Type','Axes');
+%p=copyobj(p1,f);
+%p.Position=[.26 .08 .17 .86];
+%p.FontSize=8;
+%p.Box='off';
+%p.XAxis.TickLabels=strcat('\color[rgb]{0,0,0}  ', {'0','1','2','3','4','5','6'});
+%p.XAxis.TickLength=[0 0];
+%p.Title.String='Det. residuals';
+%p.XAxis.Color='w';
+
+%Copy log-L
+ph=findobj(fh,'Type','Axes');
+ph=copyobj(ph,f);
+ph=ph(end:-1:1);
+names={'odd/even samples','','blocks [size 20]','','blocks [size 100]',''};
+for i=1:2:length(ph)
+   ph(i).Position=[.3+.23*floor(i/2) .15 .2 .75];
+   ph(i).YAxis.Label.String=namePrefix{i};
+   if i==3
+   ph(i).Title.String='CV log-L';
+   else
+       ph(i).Title.String='';
+   end
+   tt=findobj(ph(i),'Type','text');
+   delete(tt)
+   bb=findobj(ph(i),'Type','bar');
+   bb1=findobj(ph(i+1),'Type','bar');
+   for kk=1:length(bb)
+   bb(kk).YData=.5*(bb(kk).YData+bb1(kk).YData);
+   end
+       ph(i).XAxis.TickValues=100:100:700;
+       ph(i).XAxis.TickLabels={'0','1','2','3','4','5','6'};
+   if i==3
+      ph(i).XAxis.Label.String='Model order';
+   end
+   ph(i).YAxis.Label.String=names{i};
+   delete(ph(i+1))
+end
+
+p=findobj(f,'Type','Axes');
+for i=1:length(p)
+    p(i).YAxis.Color='w';
+    p(i).YAxis.Label.Color='k';
+    p(i).FontName='OpenSans';
+    p(i).FontSize=10;
+    p(i).XAxis.FontSize=12;
+    tt=findobj(p(i),'Type','text');
+    set(tt,'FontSize',10)
+end
+%saveFig(f,'../../fig/','evaluateOrder',0)
+export_fig ../../fig/evaluateOrder.png -png -c[0 5 0 5] -transparent -r600
 %%
 linsys.summaryTable([modelAll(4),mdlList(4,:)])

@@ -50,7 +50,7 @@ opts1.refineMaxIter=10; %Giant model, cannot afford too many iterations
 dummyFit=modelDummy.fit(datSet,[],'KF');
 save('../../res/allDataDummyModel.mat','modelDummy','opts1','datSet','dummyFit')
 %%
-load('/Datos/Documentos/code/EMG-LTI-SSM/res/allDataRedAlt_20190425T210335.mat')
+load ../../res/allDataRedAlt_20190510T175706.mat
 %% Compare models
 for i=2:11
 modelRed{i}.name=num2str(i-1);
