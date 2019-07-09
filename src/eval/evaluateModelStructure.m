@@ -28,7 +28,7 @@ mList=mList(end:-1:1);
 p=findobj(f1,'Type','Axes');
 set(p,'FontSize',16)
 %For the timecourse plots, remove XTicks
-for i=2:2:8
+for i=2:2:length(p)
     p(i).XAxis.TickValues=[];
     %p(i).FontSize=12;
     p(i).FontName='OpenSans';
@@ -49,7 +49,7 @@ for i=2:2:8
 end
 
 %For the checkerboards, add XTicks for all, YTicks for the first
-for i=1:2:8
+for i=1:2:length(p)
     if i==7
     p(i).YAxis.TickValues=1:15;
     p(i).YAxis.TickLabels=mList;
