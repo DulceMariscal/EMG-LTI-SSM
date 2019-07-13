@@ -16,6 +16,9 @@ mdl=mdl.scale(1/k); %Scaling C so that the columns add up to the same as the fir
 %arbitrary and changes nothing
 
 %% 1: evaluate correlations between state and obs noise
+%This should be done with care: the effects of breaks probably dominate
+%some of the estimated noises. Further, transient effects may also play a
+%role. Perhaps it would be optimal to only consider steady-state values?
 df=mdl.fit(datSet);
 on=df.obsNoise;
 sn=df.stateNoise;
@@ -30,6 +33,12 @@ for i=1:size(S,1)
     end
 end
 figure; histogram(pval(:),0:.01:1)
+figure; 
+for i=1:3
+subplot(1,4,i); imagesc(reshape(-log10(pval(i,:))>3,12,15)');
+end
+subplot(1,4,4); imagesc(reshape(var(on'),12,15)')
+
 
 %Idea: given a model using the exogneous input to drive the system:
 %1) get rid of the feedthrough term by shifting outputs by D*u, and setting
