@@ -14,13 +14,18 @@ k=sqrt(sum(mdl.D(:,1).^2));
 mdl=mdl.scale(1/k); %Scaling C so that the columns add up to the same as the first column of D
 %This results in better scaling for visualization, but is completely
 %arbitrary and changes nothing
+
+%%
+%legacy_vizSingleModelMLMC(mdl,datSet.out,datSet.in)
+
 %%
 [f1]=mdl.vizSingleFit(datSet);
+
 
 % Fix state plot:
 lg=findobj(f1,'Type','Legend');
 lg.Position(1)=.085;
-lg.Position(2)=.68;
+lg.Position(2)=.72;
 lg.AutoUpdate='off';
 
 mList={'TA','PER','SOL','LG','MG','BF','SMB','SMT','VM','VL','RF','HIP','ADM','TFL','GLU'};
@@ -45,25 +50,35 @@ for i=2:2:length(p)
     set(ll,'Color','k')
     ttl=p(i).Title.String;
     p(i).Title.String=lower(ttl);
-    
+    p(i).Title.FontWeight='normal';
 end
 
 %For the checkerboards, add XTicks for all, YTicks for the first
 for i=1:2:length(p)
-    if i==7
+    %if i==7
     p(i).YAxis.TickValues=1:15;
     p(i).YAxis.TickLabels=mList;
-    else
-        p(i).YAxis.TickValues=[];
-       p(i).YAxis.TickLabels={}; 
-    end
+    %else
+    %    p(i).YAxis.TickValues=[];
+    %   p(i).YAxis.TickLabels={}; 
+    %end
     p(i).XAxis.TickValues=[1,4,7,10]+.5;
     p(i).XAxis.TickLabels={'DS','SINGLE','DS','SWING'};
-    p(i).XAxis.FontSize=16;
-    p(i).YAxis.FontSize=16;
+
+    p(i).XAxis.FontSize=18;
+    p(i).YAxis.FontSize=18;
     p(i).FontName='OpenSans';
     p(i).XAxis.FontWeight='bold';
     p(i).CLim=[-1 1];
+    
+    %Add lines to separate DS, SINGLE, DS, SWING
+    axes(p(i))
+    hold on
+    plot([.1 1.9]+.5,15.7*[1 1],'LineWidth',4,'Color','k','Clipping','off')
+    plot([.1 1.9]+.5+6,15.7*[1 1],'LineWidth',4,'Color','k','Clipping','off')
+    plot([.1 3.9]+.5+2,15.7*[1 1],'LineWidth',4,'Color','k','Clipping','off')
+    plot([.1 3.9]+.5+8,15.7*[1 1],'LineWidth',4,'Color','k','Clipping','off')
+    p(i).XAxis.Label.Position(2)=.02;
 end
 
 %Ticks in colorbar:
@@ -77,6 +92,9 @@ cb.FontName='OpenSans';
 
 %saveFig(f1,'../../fig/','3stateModelStructure',0)
 export_fig ../../fig/3stateModelStructure.png -png -c[0 5 0 5] -transparent -r100
+%export_fig ../../fig/2stateModelStructure.png -png -c[0 5 0 5] -transparent -r100
+%pause(10)
+%error('')
 %%
 close all
 wins=[141,151,201,601,1041,1051,1101,1301];
@@ -181,4 +199,4 @@ lg.FontSize=11;
 lg.FontWeight='normal';
 
 %saveFig(f2,'../../fig/','3stateModelResiduals',0)
-export_fig ../../fig/3stateModelResiduals.png -png -c[0 5 0 5] -transparent -r100
+%export_fig ../../fig/3stateModelResiduals.png -png -c[0 5 0 5] -transparent -r100

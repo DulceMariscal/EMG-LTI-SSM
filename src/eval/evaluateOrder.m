@@ -121,18 +121,19 @@ for i=1:length(p)
     set(tt,'FontSize',10)
 end
 %saveFig(f,'../../fig/','evaluateOrder',0)
-export_fig ../../fig/evaluateOrder.png -png -c[0 5 0 5] -transparent -r600
+%export_fig ../../fig/evaluateOrder.png -png -c[0 5 0 5] -transparent -r600
 %% New evaluate order figure:
 f=figure('Units','Pixels','InnerPosition',[100 100 300*3 300*1]);
 
 %Copy BIC:
 p1=findobj(f1,'Type','Axes');
 p=copyobj(p1(end-1),f);
-p.Position=[.05 .15 .17 .75];
+p.Position=[.05 .15 .2 .75];
 p.XAxis.TickValues=[100:100:700];
 p.XAxis.TickLabels=strcat('\color[rgb]{0,0,0}  ', {'0','1','2','3','4','5','6'});
-p.Title.String='BIC';
+p.Title.String='Bayesian Information Criterion';
 p.XAxis.Label.String='';
+p.YAxis.Label.String='BIC';
 p.YAxis.TickValues=[];
 p.YAxis.Limits(1)=0;
 p.XAxis.TickLength=[0 0];
@@ -151,9 +152,9 @@ p.XAxis.TickLength=[0 0];
 ph=findobj(fh,'Type','Axes');
 ph=copyobj(ph,f);
 ph=ph(end:-1:1);
-names={'odd/even samples','','blocks [size 20]','','blocks [size 100]',''};
+names={'CV odd/even samples','','CV blocks [size 20]','','CV blocks [size 100]',''};
 for i=1:2:length(ph)
-   ph(i).Position=[.3+.23*floor(i/2) .15 .2 .75];
+   ph(i).Position=[.32+.23*floor(i/2) .15 .2 .75];
    ph(i).YAxis.Label.String=namePrefix{i};
    if i==3
    ph(i).Title.String='CV log-L';
@@ -172,7 +173,11 @@ for i=1:2:length(ph)
    if i==3
       ph(i).XAxis.Label.String='Model order';
    end
-   ph(i).YAxis.Label.String=names{i};
+   %ph(i).YAxis.Label.String=names{i};
+   ph(i).Title.String=names{i};
+   if i==1
+   ph(i).YAxis.Label.String='log-likelihood';
+   end
    delete(ph(i+1))
 end
 
@@ -186,6 +191,8 @@ for i=1:length(p)
     tt=findobj(p(i),'Type','text');
     set(tt,'FontSize',10)
 end
+bb=findobj(p,'Type','bar');
+set(bb,'BarWidth',90);
 %saveFig(f,'../../fig/','evaluateOrder',0)
 export_fig ../../fig/evaluateOrder.png -png -c[0 5 0 5] -transparent -r600
 %%

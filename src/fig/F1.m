@@ -32,9 +32,9 @@ set(ph,'Position',[leftMargThreeCol+0*btwMargThreeCol .8 3*colWidthThreeCol+2.5*
 ll=plot([1:size(V,2)]-50,V','LineWidth',4);
 ll(1).Color=legColors(1,:);
 ll(2).Color=legColors(2,:);
-xlabel('Stride cycles')
-ylabel('Belt speed')
-ph.YTickLabel={'-33%','Med.','+33%'};
+xlabel('stride cycles')
+ylabel('belt speed')
+ph.YTickLabel={'-33%','med.','+33%'};
 ph.YTick=[.667 1 1.333]*v0;
 ph.YTickLabelRotation=00;
 ph.FontSize=8;
@@ -57,7 +57,7 @@ ptc=patch(500*[0 1 1 0]+conditionOffset(4)+ptWidth,[.51 .51 1.6 1.6],.8*ones(1,3
 uistack(ptc,'bottom')
 text(200,textY+.28,'BASELINE','FontSize',condFontSize,'Clipping','off','Color',condColors(1,:),'FontWeight',fw)
 text(880,textY+.28,'WASHOUT','FontSize',condFontSize,'Clipping','off','Color',condColors(3,:),'FontWeight',fw)
-lg=legend([ll' ptcw ptc],{'DOMINANT LEG','NON-DOM. LEG','tied','split (+)'},'FontSize',condFontSize*.75,'FontWeight',fw,'Location','South','NumColumns',2);
+lg=legend([ll' ptcw ptc],{'DOMINANT LEG','NON-DOM. LEG','tied','split'},'FontSize',condFontSize*.75,'FontWeight',fw,'Location','South','NumColumns',2);
 lg.Position=lg.Position-[-.05 .005 0 0];
 set(ph,'XTick','')
 axis([-50 conditionOffset(end) .5 1.55])
@@ -100,7 +100,7 @@ for k=2
     pt(1).FaceAlpha=.6;
     if k==2
         ax.Title.String='SINGLE MUSCLE ACTIVITY';
-        lg=legend(ll(end-1:end),{'Non-dom.','Dom.'},'Location','NorthEast');
+        lg=legend(ll(end-1:end),{'non-dom.','dom.'},'Location','NorthEast');
         lg.Box='off';
         lg.Position(1)=lg.Position(1)+.02;
         lg.Position(2)=lg.Position(2)+.012;
@@ -129,7 +129,7 @@ for k=2
     txt.FontSize=6;
     txt=findobj(p1d,'Type','Text','String','Difference');
     txt.Position(1)=txt.Position(1)-1;
-    txt.Position(2)=txt.Position(2)-.2;
+    txt.Position(2)=txt.Position(2);
     txt.String={'difference'};
     txt.FontSize=6;
         %delete(p1d(2:3))
@@ -143,7 +143,7 @@ ph=findobj(f1c,'Type','Axes');
 p1c=copyobj(ph,fh);
 axes(p1c)
 set(p1c,'Colormap',flipud(niceMap(condColors(1,:))),'Clim',[0 1])
-p1c.Position=p1c.Position.*[0 1 0 1.2*1/heightFactor] + [1.5*leftMargThreeCol+1*colWidthThreeCol+1*btwMargThreeCol -.05 colWidthThreeCol -.05];
+p1c.Position=p1c.Position.*[0 1 0 1.2*1/heightFactor] + [1.1*leftMargThreeCol+1*colWidthThreeCol+1*btwMargThreeCol -.05 colWidthThreeCol -.05];
 
 faux=open('./Fig3.fig');
 ss=findobj(faux,'Type','Surface');
@@ -155,7 +155,7 @@ set(cc,'Ticks',[0 .5 1],'FontSize',8,'FontWeight','normal');
 set(cc,'TickLabels',{'0%','50%','100%'});
 set(gcf,'Color',ones(1,3))
 cc.Limits=[0 1];
-cc.Position=cc.Position+[.08 -.11 -.02 -.01];
+cc.Position=cc.Position+[.08 -.13 -.02 -.01];
 title('LATE ADAPTATION ACTIVITY')
 ax=gca;
 %ax.Title.Color=condColors(1,:);
@@ -168,7 +168,7 @@ for i=1:length(ax.YTickLabel)
     end
     %ax.YTickLabel{i}=['\color[rgb]{' aux(1:end-1) '} ' ax.YTickLabel{i}];
     ax.YTickLabel{i}=regexprep(ax.YTickLabel{i},'\{.*\}',['\{' aux(1:end-1) '\}']);
-    ax.YAxis.Label.FontSize=8;
+    ax.YAxis.Label.FontSize=7;
 end
 %text(-.4, 31,'B','FontSize',16,'FontWeight','bold','Clipping','off')
 %text(-.4, 45.5,'A','FontSize',16,'FontWeight','bold','Clipping','off')
@@ -187,15 +187,23 @@ tt.Color=legColors(2,:);
 
 tt=findobj(gca,'Type','Text','String','EXTENSORS');
 tt.FontSize=8;
+tt.Position(2)=tt.Position(2)-.4;
 tt=findobj(gca,'Type','Text','String','FLEXORS');
 tt.FontSize=8;
+tt.Position(2)=tt.Position(2)-.4;
 
 ll=findobj(gca,'Type','Line','Color',ax.ColorOrder(1,:));
 set(ll,'Color',legColors(2,:));
 ll=findobj(gca,'Type','Line','Color',zeros(1,3));
 for i=1:length(ll)
    if ll(i).YData(1)<0
-      ll(i).YData=ll(i).YData+.1; 
+      ll(i).YData=ll(i).YData+-.1; 
+   end
+end
+ll=findobj(gca,'Type','Line','LineWidth',5);
+for i=1:length(ll)
+   if ll(i).YData(1)<0
+      ll(i).YData=ll(i).YData+-.4; 
    end
 end
 ll=findobj(gca,'Type','Line','Color',legColors(1,:));
@@ -208,6 +216,12 @@ set(gca, 'TickLength',[0 0])
 ss=findobj(gca,'Type','surface');
 ss.CData=ss.CData+c1;
 close(f1c)
+ax=gca;
+ax.XTickLabel={};
+text(0/12+.3/12,-1.3,'DS','FontSize',8)
+text(2/12+.2/12,-1.3,'SINGLE','FontSize',8)
+text(6/12+.3/12,-1.3,'DS','FontSize',8)
+text(8/12+.2/12,-1.3,'SWING','FontSize',8)
 %% Add difference panel:
 cmap=flipud(map);
 f1c=open('./Fig1D.fig');
@@ -239,16 +253,25 @@ set(cc,'Ticks',[-.5 0 .5],'FontSize',8,'FontWeight','normal');
 set(cc,'TickLabels',{'+50% dom.','0%','+50% n.d.'});
 set(gcf,'Color',ones(1,3))
 cc.Limits=[-.5 .5];
-cc.Position=cc.Position+[+.04 -.14 -.02 .015];
+cc.Position=cc.Position+[+.04 -.15 -.02 .015];
+
 ll=findobj(gca,'Type','Line');
 delete(ll(1:end-4))
 set(ll(end-3:end),'LineWidth',1);
 ll=findobj(gca,'Type','Line');
+set(ll,'LineWidth',2)
 for i=1:length(ll)
-    ll(i).YData=ll(i).YData+.1;
+    ll(i).YData=ll(i).YData-.1;
 end
 tt=findobj(gca,'Type','Text');
 delete(tt)
+ax=gca;
+ax.XTickLabel={};
+text(0/12+.3/12,-1.3,'DS','FontSize',8)
+text(2/12+.2/12,-1.3,'SINGLE','FontSize',8)
+text(6/12+.3/12,-1.3,'DS','FontSize',8)
+text(8/12+.2/12,-1.3,'SWING','FontSize',8)
+
 %% Save fig
 txt=findobj(gcf,'Type','Text');
 set(txt,'FontName',fName);
@@ -257,4 +280,5 @@ set(ax,'FontName',fName);
 for i=1:length(ax)
     ax(i).Title.FontWeight='normal';
 end
-saveFig(fh,'../../fig/','methods',0)
+%saveFig(fh,'../../fig/','methods',0)
+export_fig ../../fig/methods.png -png -c[0 5 0 5] -transparent -r300

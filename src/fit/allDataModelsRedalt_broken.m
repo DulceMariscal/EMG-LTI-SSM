@@ -79,3 +79,6 @@ nw=datestr(now,'yyyymmddTHHMMSS');
 save(['../../res/allDataRedAltBroken_' nw '.mat'],'modelRed', 'datSet', 'opts','Ubreaks','flatIdx');
 
 %% Run evaluate breaks
+load ../../res/allDataRedAltBroken_20190616T001216.mat
+%%
+fittedLinsys.compare(modelRed(2:5))

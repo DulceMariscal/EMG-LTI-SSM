@@ -76,6 +76,8 @@ ds2.in=datSet.in(1,:)-H*ds2.out; %e=u-Hy
 %Check new log-L: (should improve, because of smaller unexplained state
 %innovation)
 mdl2.logL(ds2) %Does not improve, why?
+mdl2=mdl2.EMrefine(ds2); %Refinement seems to help. Why? Is it that model assumption violations make the math above not good?
+mdl2.logL(ds2) %Still not as good as logL before the decorrelation process
 
 %Check new empirical S:
 df2=mdl2.fit(ds2);

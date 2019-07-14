@@ -50,7 +50,14 @@ nw=datestr(now,'yyyymmddTHHMMSS');
 save(['../../res/allDataRedAltIndivs_' nw '.mat'],'modelRed', 'datSet', 'opts');
 
 %%
-load('/Datos/Documentos/code/EMG-LTI-SSM/res/allDataRedAltIndivs_20190425T210335.mat')
+load ../../res/allDataRedAltIndivs_20190710T003814.mat
+
+%% For each subj, do the BIC:
+for j=1:12
+    j
+    b(:,j)=cellfun(@(x) x.BIC,modelRed(:,j));
+    taus=-1./log(eig(modelRed{3,j}.A))
+end
 %% Compare models
 for i=2:11
 modelRed{i}.name=num2str(i-1);
