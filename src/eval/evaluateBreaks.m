@@ -51,7 +51,7 @@ models{1}=contModel{ord}.mleShift(datSet).EMrefine(datSet); %Doing the shift her
 
 
 %%
-figure('Units','Pixels','InnerPosition',[100 100 300*4 300*1.5])
+fh=figure('Units','Pixels','InnerPosition',[100 100 300*4 300*1.5]);
 for kk=1:2
     mdl=models{kk};
     switch kk
@@ -129,16 +129,18 @@ for kk=1:2
         set(pp,'FaceColor',newColors(jj,:))
     end
 end
-
+savefig(fh,'states.fig')
 %% For each plot: copy it 4 times, show only a zoomed version around the
+fh=openfig('states.fig');
 %breaks
+fh.InnerPosition=[100 100 300*4 300*2.5];
 ph=findobj(gcf,'Type','Axes');
 ph=ph([2,1]);
 for i=1:length(ph) %Both types of fits
     for j=1:4 %Copy four times
        ax=copyobj(ph(i),gcf);
        %ax.Position=[.08+(j-1)*.17 ph(i).Position(2) .15 ph(i).Position(4)];
-       ax.Position=[.08+(j-1)*.18 .1+.45*(2-i) .16 .4];
+       ax.Position=[.08+(j-1)*.18 .1+.3*(2-i) .16 .23];
         ax.XAxis.Limits=151+[-12,12]+(j-1)*300;
         ax.XAxis.TickValues=151+[-150:10:1500];
         axes(ax)
@@ -168,7 +170,7 @@ for i=1:length(ph) %Both types of fits
     end
     %add a plot quantifying break amounts
     ax=axes();
-    ax.Position=[.1+(4)*.18 .1+.45*(2-i) .16 .4];
+    ax.Position=[.1+(4)*.18 .1+.3*(2-i) .16 .23];
     hold on
     for jj=1:3 %Each state
         for j=1:4 %Each break
@@ -191,9 +193,14 @@ for i=1:length(ph) %Both types of fits
         title('break z-score')
         ax.YAxis.Limits=[-4.5 2];
     end
-    %delete old plot
-    delete(ph(i))
 end
+ph(1).Position(2)=.7;
+ph(1).Position(4)=.25;
+ph(1).Position(1)=.08;
+ph(1).Position(3)=.85;
+ph(1).XAxis.Limits=[0 1450];
+    %delete old plot
+    delete(ph(2))
 
 %saveFig(gcf,'../../fig/','breaks',0)
 %export_fig ../../fig/breaks.png -png -c[0 5 0 5] -transparent -r600

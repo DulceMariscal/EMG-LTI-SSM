@@ -119,9 +119,10 @@ for i=1:length(p)
     p(i).XAxis.FontSize=12;
     tt=findobj(p(i),'Type','text');
     set(tt,'FontSize',10)
+    delete(tt)
 end
 %saveFig(f,'../../fig/','evaluateOrder',0)
-%export_fig ../../fig/evaluateOrder.png -png -c[0 5 0 5] -transparent -r600
+%export_fig ../../fig/evaluateOrderBis.png -png -c[0 5 0 5] -transparent -r600
 %% New evaluate order figure:
 f=figure('Units','Pixels','InnerPosition',[100 100 300*3 300*1]);
 
@@ -190,10 +191,11 @@ for i=1:length(p)
     p(i).XAxis.FontSize=12;
     tt=findobj(p(i),'Type','text');
     set(tt,'FontSize',10)
+    delete(tt)
 end
 bb=findobj(p,'Type','bar');
 set(bb,'BarWidth',90);
 %saveFig(f,'../../fig/','evaluateOrder',0)
-export_fig ../../fig/evaluateOrder.png -png -c[0 5 0 5] -transparent -r600
+export_fig ../../fig/evaluateOrderBis.png -png -c[0 5 0 5] -transparent -r600
 %%
 linsys.summaryTable([modelAll(4),mdlList(4,:)])

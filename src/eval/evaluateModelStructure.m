@@ -5,7 +5,7 @@ addpath(genpath('../../../'))
 clear all
 load ../../res/allDataRedAlt_20190510T175706.mat
 %% Select model order
-ord=3;
+ord=4;
 mdl=modelRed{ord+1};
 
 %% Make a pretty plot of the model's characteristics
@@ -25,7 +25,7 @@ mdl=mdl.scale(1/k); %Scaling C so that the columns add up to the same as the fir
 % Fix state plot:
 lg=findobj(f1,'Type','Legend');
 lg.Position(1)=.085;
-lg.Position(2)=.72;
+lg.Position(2)=.73;
 lg.AutoUpdate='off';
 
 mList={'TA','PER','SOL','LG','MG','BF','SMB','SMT','VM','VL','RF','HIP','ADM','TFL','GLU'};
@@ -49,8 +49,10 @@ for i=2:2:length(p)
     ll=findobj(p(i),'Type','Line');
     set(ll,'Color','k')
     ttl=p(i).Title.String;
-    p(i).Title.String=lower(ttl);
+    p(i).Title.String=regexprep(lower(ttl), 'b',['B_' num2str(ceil((8-i)/2))]);
     p(i).Title.FontWeight='normal';
+    p(i).Title.FontSize=22;
+    p(i).Position(2)=.7;
 end
 
 %For the checkerboards, add XTicks for all, YTicks for the first
@@ -79,6 +81,12 @@ for i=1:2:length(p)
     plot([.1 3.9]+.5+2,15.7*[1 1],'LineWidth',4,'Color','k','Clipping','off')
     plot([.1 3.9]+.5+8,15.7*[1 1],'LineWidth',4,'Color','k','Clipping','off')
     p(i).XAxis.Label.Position(2)=.02;
+    p(i).Position(2)=.05;
+    if i>1
+    p(i).Title.String=['C_{i' num2str(ceil((8-i)/2)) '}'];
+    else
+        p(i).Title.String='D';
+    end
 end
 
 %Ticks in colorbar:
@@ -91,8 +99,8 @@ cb.FontWeight='bold';
 cb.FontName='OpenSans';
 
 %saveFig(f1,'../../fig/','3stateModelStructure',0)
-export_fig ../../fig/3stateModelStructure.png -png -c[0 5 0 5] -transparent -r100
-%export_fig ../../fig/2stateModelStructure.png -png -c[0 5 0 5] -transparent -r100
+%export_fig ../../fig/3stateModelStructure.png -png -c[0 5 0 5] -transparent -r100
+export_fig ../../fig/4stateModelStructure.png -png -c[0 5 0 5] -transparent -r100
 %pause(10)
 %error('')
 %%
