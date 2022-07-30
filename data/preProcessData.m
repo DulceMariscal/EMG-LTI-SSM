@@ -1,13 +1,14 @@
 %%
 %Running this script requires labTools (github.com/pittSMLlab/labTools/)
 %% Aux vars:
-groupName='controls';
-matDataDir='./';
-loadName=[matDataDir 'controlData'];
-load(loadName)
+% groupName='controls';
+% matDataDir='./';
+% loadName=[matDataDir 'controlData'];
+% load(loadName)
 
 %%
-group=controls;
+group=adaptationData.createGroupAdaptData({'C0002params','C0003params','C0004params','C0005params','C0006params','C0007params','C0008params','C0009params','C0010params',...
+    'C0011params','C0012params','C0013params','C0014params','C0015params','C0016params'});
 age=group.getSubjectAgeAtExperimentDate/12;
 
 %% Change Adaptation condition to Adapt1,2,3
@@ -23,7 +24,7 @@ end
 %% Define epochs
 baseEp=getBaseEpoch;
 %Adaptation epochs
-strides=[-150 300 300 300 600];exemptFirst=[0];exemptLast=[0];
+strides=[-50 300 300 300 300];exemptFirst=[0];exemptLast=[0];
 names={};
 shortNames={};
 cond={'TM Base','Adapt1','Adapt2','Adapt3','Washout'};
@@ -64,10 +65,10 @@ h5write('dynamicsData.h5','/EMGdata',EMGdata)
 SLA=squeeze(cell2mat(dataContribs));
 h5create('dynamicsData.h5','/SLA',size(SLA))
 h5write('dynamicsData.h5','/SLA',SLA)
-speedDiff=[zeros(1,150),ones(1,900),zeros(1,600)];
+speedDiff=[zeros(1,50),ones(1,900),zeros(1,300)];
 h5create('dynamicsData.h5','/speedDiff',size(speedDiff))
 h5write('dynamicsData.h5','/speedDiff',speedDiff)
-breaks=[zeros(1,150),1,zeros(1,299),1,zeros(1,299),1,zeros(1,299),1,zeros(1,599)];
+breaks=[zeros(1,50),1,zeros(1,299),1,zeros(1,299),1,zeros(1,299),1,zeros(1,299)];
 h5create('dynamicsData.h5','/breaks',size(breaks))
 h5write('dynamicsData.h5','/breaks',breaks)
 hdf5write('dynamicsData.h5','/labels',l2,'WriteMode','append')

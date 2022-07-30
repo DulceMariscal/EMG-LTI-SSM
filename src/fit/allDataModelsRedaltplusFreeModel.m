@@ -61,6 +61,14 @@ EMGdata=h5read(fname,'/EMGdata');
 binwith=5;
 [Y,Yasym,Ycom,U,Ubreaks]=groupDataToMatrixForm(1:size(EMGdata,3),0,fname);
 Uf=[U;ones(size(U))];
+
+Y=datSet.out;
+U=datSet.in;
+X=Y-(Y/U)*U; %Projection over input
+s=var(X'); %Estimate of variance
+flatIdx=s<.005; %Variables are split roughly in half at this threshold
+datSetRed=dset(U,Y(~flatIdx,:));
+
 % C=[C1 C3];
 % C=Cnew;
 bias=0;% nanmean(Yasym(5:30,:));

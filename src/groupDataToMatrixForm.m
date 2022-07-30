@@ -11,7 +11,7 @@ EMGdata=h5read(fName,'/EMGdata');
 SLA=h5read(fName,'/SLA');
 speedDiff=h5read(fName,'/speedDiff');
 breaks=h5read(fName,'/breaks');
-% labels=hdf5read(fName,'/labels');
+labels=hdf5read(fName,'/labels');
 
 %%
 U=speedDiff;

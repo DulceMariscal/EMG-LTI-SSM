@@ -1,10 +1,14 @@
-load('/Datos/Documentos/code/EMG-LTI-SSM/res/allDataRedAlt_20190510T175706.mat')
+% load('/Datos/Documentos/code/EMG-LTI-SSM/res/allDataRedAlt_20190510T175706.mat')
 
 %%
-legacy_vizSingleModelMLMC(modelRed{4},datSet.out,datSet.in)
+legacy_vizSingleModelMLMC_LongAdapt(modelRed,datSet.out,datSet.in)
 %%saveFig(gcf,'../../fig/','threeState',0)
-export_fig ../../fig/threeState.png -png -c[0 5 0 5] -transparent -r600
+% export_fig ../../fig/threeState.png -png -c[0 5 0 5] -transparent -r600
 
+legacy_vizSingleModelMLMC_FreeModel(modelRed,datSet.out,datSet.in)
+%%  
+
+legacy_vizSingleModelMLMC(modelRed,datSet.out,datSet.in)
 %%
 
 legacy_vizSingleModelMLMC(modelRed{5},datSet.out,datSet.in)
@@ -42,6 +46,7 @@ end
 %title('MLE one-ahead output error (RMSE, mov. avg.)')
 axis tight
 grid on
+yticks('auto')
 set(gca,'YScale','log')
 %Add previous stride model:
 %ind=find(diff(U(1,:))~=0);
