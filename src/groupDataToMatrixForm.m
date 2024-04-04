@@ -1,4 +1,4 @@
-function [Y,Yasym,Ycom,U,Ubreaks]=groupDataToMatrixForm(subjIdx,sqrtFlag,fName)
+function [Y,Yasym,Ycom,U,Ubreaks,Ysum]=groupDataToMatrixForm(subjIdx,sqrtFlag,fName)
 %% Load real data:
 % fName='dynamicsData_C_s12V2.h5';
 % fName='dynamicsData_AUF_s7.h5';
@@ -31,5 +31,7 @@ end
 Yasym=Y-fftshift(Y,2);
 Ycom=Y-Yasym;
 Yasym=Yasym(:,1:size(Yasym,2)/2,:);
+Ysum=Y+fftshift(Y,2);
+Ysum=Ysum(:,1:size(Ysum,2)/2,:);
 Ycom=Ycom(:,1:size(Ycom,2)/2,:);
 end
